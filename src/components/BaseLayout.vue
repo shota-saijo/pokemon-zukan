@@ -18,7 +18,7 @@
     </v-toolbar>
     <v-content>
       <v-container fill-height grid-list-md>
-        <router-view></router-view>
+        <slot></slot>
       </v-container>
     </v-content>
   </v-app>
