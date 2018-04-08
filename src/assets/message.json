@@ -1,0 +1,44 @@
+{
+  "ja": {
+    "types": {
+      "poison": "どく",
+      "grass": "くさ",
+      "fire": "ほのお",
+      "normal": "ノーマル",
+      "fighting": "かくとう",
+      "flying": "ひこう",
+      "ground": "じめん",
+      "rock": "いわ",
+      "bug": "むし",
+      "ghost": "ゴースト",
+      "steel": "はがね",
+      "water": "みず",
+      "electric": "でんき",
+      "psychic": "エスパー",
+      "ice": "こおり",
+      "dragon": "ドラゴン",
+      "dark": "あく",
+      "fairy": "フェアリー"
+    },
+    "type-colors": {
+      "poison": "purple",
+      "grass": "teal",
+      "fire": "red",
+      "normal": "white",
+      "fighting": "deep-orange lighten-1",
+      "flying": "blue-grey lighten-5",
+      "ground": "brown",
+      "rock": "brown darken-1",
+      "bug": "light-green darken-2",
+      "ghost": "purple darken-2",
+      "steel": "blue-grey lighten-4",
+      "water": "blue",
+      "electric": "yellow",
+      "psychic": "purple accent-3",
+      "ice": "light-blue darken-1",
+      "dragon": "light-blue darken-4",
+      "dark": "grey darken-4",
+      "fairy": "pink accent-1"
+    }
+  }
+}
