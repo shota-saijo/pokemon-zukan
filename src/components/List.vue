@@ -36,7 +36,7 @@ export default {
   data: () => ({
     loading: true,
     interval: {
-      limit: 100,
+      limit: 10,
       offset: 0
     },
     result: {},
@@ -50,12 +50,12 @@ export default {
       this.pokemons = response.results
     },
     async previous () {
-      this.interval.offset = this.interval.offset - 100
+      this.interval.offset = this.interval.offset - 10
       await this.getPokemons()
       this.loading = false
     },
     async next () {
-      this.interval.offset = this.interval.offset + 100
+      this.interval.offset = this.interval.offset + 10
       await this.getPokemons()
       this.loading = false
     }
