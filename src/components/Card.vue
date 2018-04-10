@@ -5,7 +5,10 @@
       <v-spacer></v-spacer>
       <v-chip v-for="pokeType in pokemon.types" :key="pokeType.slot" :color="$t(`type-colors.${pokeType.type.name}`)" text-color="white">{{ $t(`types.${pokeType.type.name}`) }}</v-chip>
     </v-card-title>
-    <v-card-media :src="pokemon.sprites.front_default" contain height="200px"></v-card-media>
+    <v-card-media @click="show = !show" :src="pokemon.sprites.front_default" contain height="200px"></v-card-media>
+    <v-slide-y-transition>
+      <detail v-if="show" :pokemon="pokemon" :species="pokemonSpecies"></detail>
+    </v-slide-y-transition>
   </v-card>
   <v-card v-else>
     <v-card-text>
@@ -15,39 +18,56 @@
 </template>
 
 <script>
-import { Pokedex } from 'pokeapi-js-wrapper'
+import localforage from 'localforage'
+import DetailVue from './Detail.vue'
 
-const pokedex = new Pokedex({
-  protocol: 'https',
-  hostName: 'pokeapi.co',
-  versionPath: '/api/v2/',
-  cache: true,
-  timeout: 60 * 1000
-})
+const BASE_URL = 'https://pokeapi.co/api/v2'
+
+const storage = localforage.createInstance()
 
 export default {
   name: 'Card',
+  components: {
+    'detail': DetailVue
+  },
   props: {
     name: { type: String, required: true }
   },
   data: () => ({
     loading: true,
-    pokemon: {},
-    pokemonSpecies: {}
+    show: false,
+    pokemon: null,
+    pokemonSpecies: null
   }),
   methods: {
-    async getPokemon () {
-      const res = await pokedex.getPokemonByName(this.name)
+    async getPokemonFromApi () {
+      const res = await this.$http.get(`${BASE_URL}/pokemon/${this.name}/`)
+      this.pokemon = res.data
+      storage.setItem(`pokemon.${this.name}`, res.data)
+    },
+    async getPokemonSpeciesFromApi () {
+      const res = await this.$http.get(`${BASE_URL}/pokemon-species/${this.name}/`)
+      this.pokemonSpecies = res.data
+      storage.setItem(`pokemon.species.${this.name}`, res.data)
+    },
+    async getPokemonFromStorage () {
+      const res = await storage.getItem(`pokemon.${this.name}`)
       this.pokemon = res
     },
-    async getPokemonSpecies () {
-      const res = await pokedex.getPokemonSpeciesByName(this.name)
+    async getPokemonSpeciesFromStorage () {
+      const res = await storage.getItem(`pokemon.species.${this.name}`)
       this.pokemonSpecies = res
     }
   },
   async created () {
-    await this.getPokemon()
-    await this.getPokemonSpecies()
+    await this.getPokemonFromStorage()
+    await this.getPokemonSpeciesFromStorage()
+    if (!this.pokemon) {
+      await this.getPokemonFromApi()
+    }
+    if (!this.pokemonSpecies) {
+      await this.getPokemonSpeciesFromApi()
+    }
     this.loading = false
   }
 }

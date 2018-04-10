@@ -2,31 +2,18 @@
   <v-layout row wrap>
     <v-flex xs12>
       <v-spacer></v-spacer>
-      <v-btn :disabled="!result.previous" @click="previous">前へ</v-btn>
-      <v-btn :disabled="!result.next" @click="next">次へ</v-btn>
+      <v-btn :disabled="page === 1" @click="previous">前へ</v-btn>
+      <v-btn :disabled="pageCount === page" @click="next">次へ</v-btn>
     </v-flex>
-    <template v-if="!loading">
-      <v-flex v-for="pokemon in pokemons" :key="pokemon.url">
-        <card :name="pokemon.name"></card>
-      </v-flex>
-    </template>
-    <v-flex v-else justify-center>
-      <v-progress-circular indeterminate :size="100" :width="7" color="primary"></v-progress-circular>
+    <v-flex v-for="pokemon in displayPokemons" :key="pokemon.no">
+      <card :name="pokemon.name"></card>
     </v-flex>
   </v-layout>
 </template>
 
 <script>
 import CardVue from './Card.vue'
-import { Pokedex } from 'pokeapi-js-wrapper'
-
-const pokedex = new Pokedex({
-  protocol: 'https',
-  hostName: 'pokeapi.co',
-  versionPath: '/api/v2/',
-  cache: true,
-  timeout: 5 * 1000
-})
+import pokemons from '@/assets/pokemons.json'
 
 export default {
   name: 'List',
@@ -34,35 +21,33 @@ export default {
     'card': CardVue
   },
   data: () => ({
-    loading: true,
-    interval: {
-      limit: 10,
-      offset: 0
-    },
-    result: {},
-    pokemons: []
+    displayPerPage: 10,
+    page: 1
   }),
-  methods: {
-    async getPokemons () {
-      this.loading = true
-      const response = await pokedex.getPokemonsList(this.interval)
-      this.result = response
-      this.pokemons = response.results
+  computed: {
+    start () {
+      return (this.page - 1) * this.displayPerPage
     },
-    async previous () {
-      this.interval.offset = this.interval.offset - 10
-      await this.getPokemons()
-      this.loading = false
+    end () {
+      return this.page * this.displayPerPage
     },
-    async next () {
-      this.interval.offset = this.interval.offset + 10
-      await this.getPokemons()
-      this.loading = false
+    displayPokemons () {
+      return pokemons.list.filter((p, i) => this.start <= i && i < this.end)
+    },
+    count () {
+      return pokemons.list.length
+    },
+    pageCount () {
+      return Math.ceil(this.count / this.displayPerPage)
     }
   },
-  async created () {
-    await this.getPokemons()
-    this.loading = false
+  methods: {
+    previous () {
+      this.page = this.page - 1
+    },
+    next () {
+      this.page = this.page + 1
+    }
   }
 }
 </script>
