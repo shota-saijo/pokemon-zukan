@@ -22,7 +22,7 @@ const pokedex = new Pokedex({
   hostName: 'pokeapi.co',
   versionPath: '/api/v2/',
   cache: true,
-  timeout: 5 * 1000
+  timeout: 60 * 1000
 })
 
 export default {
@@ -38,11 +38,11 @@ export default {
   methods: {
     async getPokemon () {
       const res = await pokedex.getPokemonByName(this.name)
-      this.pokemon = res.data
+      this.pokemon = res
     },
     async getPokemonSpecies () {
       const res = await pokedex.getPokemonSpeciesByName(this.name)
-      this.pokemonSpecies = res.data
+      this.pokemonSpecies = res
     }
   },
   async created () {
